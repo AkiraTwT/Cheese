@@ -1,0 +1,18 @@
+{
+  "name": "Cheese",
+  "description": "Cheese - sends you the class schedule for your group and even simulates reports of missed classes.",
+  "version": "0.0.1",
+  "bot": {
+    "token": "your token"
+  },
+  "url": "url",
+  "base_url": "empty",
+  "channel": {
+    "default": "",
+    "admin": ""
+  },
+  "time": {
+    "hour": 0,
+    "minute": 0
+  }
+}
