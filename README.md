@@ -30,3 +30,5 @@ Cheese sends the schedule from the KS PGUTI website. The bot also includes onlin
       ```
 7. **Apply the configuration:**
     - Restart the bot to apply the changes. No further restarts will be required.
+
+:3
