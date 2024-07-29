@@ -6,7 +6,7 @@
     "token": "your token"
   },
   "url": "url",
-  "base_url": "empty",
+  "base_url": "",
   "channel": {
     "default": "",
     "admin": ""

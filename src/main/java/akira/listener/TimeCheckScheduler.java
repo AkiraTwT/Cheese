@@ -1,10 +1,7 @@
 package akira.listener;
 
 import akira.command.CommandHandler;
-import akira.util.Config;
-import akira.util.Day;
-import akira.util.Link;
-import akira.util.ScheduleParser;
+import akira.util.*;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
@@ -15,12 +12,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.*;
-import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.format.TextStyle;
 import java.util.List;
-import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.regex.Matcher;
@@ -48,13 +42,8 @@ public class TimeCheckScheduler extends ListenerAdapter {
                 LocalDateTime currentTime = LocalDateTime.now();
 
                 if (currentTime.getHour() == CommandHandler.getHour() && currentTime.getMinute() == CommandHandler.getMinute()) {
-                    DayOfWeek nextDay = currentTime.getDayOfWeek().plus(1);
-                    String dayOfWeek = nextDay.getDisplayName(TextStyle.FULL, Locale.getDefault());
-                    dayOfWeek = dayOfWeek.substring(0, 1).toUpperCase() + dayOfWeek.substring(1);
-
-                    List<Day> days = ScheduleParser.printScheduleForDay(dayOfWeek);
+                    List<Day> days = ScheduleParser.printScheduleForDay(Time.getCurrentDay(1));
                     TextChannel channel = CommandHandler.getDefaultChannel();
-
                     channel.sendMessageEmbeds(toEmbed(days)).queue();
                 }
             }

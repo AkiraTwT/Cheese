@@ -16,11 +16,7 @@ import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
-import java.time.DayOfWeek;
-import java.time.LocalDateTime;
-import java.time.format.TextStyle;
 import java.util.List;
-import java.util.Locale;
 
 public class CommandHandler extends ListenerAdapter {
     @Getter @Setter
@@ -44,7 +40,7 @@ public class CommandHandler extends ListenerAdapter {
             }
             case "сегодня" -> {
                 event.deferReply(true).queue();
-                List<Day> days = ScheduleParser.printScheduleForDay(getCurrentDay());
+                List<Day> days = ScheduleParser.printScheduleForDay(Time.getCurrentDay(0));
                 event.getHook().sendMessageEmbeds(toEmbed(days)).queue();
             }
             case "пропуски" -> {
@@ -210,14 +206,6 @@ public class CommandHandler extends ListenerAdapter {
             builder.setDescription(userDetails);
         }
         return builder.build();
-    }
-
-    private String getCurrentDay() {
-        LocalDateTime currentTime = LocalDateTime.now();
-        DayOfWeek day = currentTime.getDayOfWeek();
-        String dayOfWeek = day.getDisplayName(TextStyle.FULL, Locale.getDefault());
-        dayOfWeek = dayOfWeek.substring(0, 1).toUpperCase() + dayOfWeek.substring(1);
-        return dayOfWeek;
     }
 
     @Override
