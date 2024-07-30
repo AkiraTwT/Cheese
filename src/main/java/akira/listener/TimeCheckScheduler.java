@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Timer;
@@ -32,10 +33,10 @@ public class TimeCheckScheduler extends ListenerAdapter {
 
         Timer timer = new Timer();
         timer.scheduleAtFixedRate(createWeeklyTask(), 0, Duration.ofHours(12).toMillis());
-        timer.scheduleAtFixedRate(createDailyTask(event), 0, Duration.ofMinutes(1).toMillis());
+        timer.scheduleAtFixedRate(createDailyTask(), 0, Duration.ofMinutes(1).toMillis());
     }
 
-    private TimerTask createDailyTask(@NotNull ReadyEvent event) {
+    private TimerTask createDailyTask() {
         return new TimerTask() {
             @Override
             public void run() {
@@ -56,10 +57,14 @@ public class TimeCheckScheduler extends ListenerAdapter {
             public void run() {
                 try {
                     String dateRange = ScheduleParser.parseWeekDateRange();
-                    int numDay = extractDay(dateRange);
+                    LocalDate currentDate = LocalDate.now();
 
-                    LocalDateTime currentDay = LocalDateTime.now();
-                    if (numDay <= currentDay.getDayOfMonth()) {
+                    int scheduleDay = extractDay(dateRange);
+                    int scheduleMonth = extractMonth(dateRange);
+
+                    LocalDate scheduleDate = LocalDate.of(currentDate.getYear(), scheduleMonth, scheduleDay);
+
+                    if (currentDate.isAfter(scheduleDate)) {
                         Link.setNextWeek();
                     }
                 } catch (RuntimeException e) {
@@ -128,6 +133,17 @@ public class TimeCheckScheduler extends ListenerAdapter {
 
     private int extractDay(String dateRange) {
         Pattern pattern = Pattern.compile("по\\s(\\d{2})\\.\\d{2}\\.\\d{4}");
+        Matcher matcher = pattern.matcher(dateRange);
+
+        if (matcher.find()) {
+            return Integer.parseInt(matcher.group(1));
+        } else {
+            throw new IllegalArgumentException("Invalid date range format: " + dateRange);
+        }
+    }
+
+    private int extractMonth(String dateRange) {
+        Pattern pattern = Pattern.compile("по\\s\\d{2}\\.(\\d{2})\\.\\d{4}");
         Matcher matcher = pattern.matcher(dateRange);
 
         if (matcher.find()) {

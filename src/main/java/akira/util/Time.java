@@ -4,28 +4,27 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.format.TextStyle;
 import java.time.temporal.WeekFields;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
 public class Time {
-    private static final ZoneId samaraZone = ZoneId.of("Europe/Samara");
-    private static final Map<String, String> dayOfWeekTranslations = new HashMap<>();
+    private static final ZoneId SAMARA_ZONE = ZoneId.of("Europe/Samara");
+    private static final Map<DayOfWeek, String> DAY_OF_WEEK_TRANSLATIONS = new HashMap<>();
 
     static {
-        dayOfWeekTranslations.put("Monday", "Понедельник");
-        dayOfWeekTranslations.put("Tuesday", "Вторник");
-        dayOfWeekTranslations.put("Wednesday", "Среда");
-        dayOfWeekTranslations.put("Thursday", "Четверг");
-        dayOfWeekTranslations.put("Friday", "Пятница");
-        dayOfWeekTranslations.put("Saturday", "Суббота");
-        dayOfWeekTranslations.put("Sunday", "Воскресенье");
+        DAY_OF_WEEK_TRANSLATIONS.put(DayOfWeek.MONDAY, "Понедельник");
+        DAY_OF_WEEK_TRANSLATIONS.put(DayOfWeek.TUESDAY, "Вторник");
+        DAY_OF_WEEK_TRANSLATIONS.put(DayOfWeek.WEDNESDAY, "Среда");
+        DAY_OF_WEEK_TRANSLATIONS.put(DayOfWeek.THURSDAY, "Четверг");
+        DAY_OF_WEEK_TRANSLATIONS.put(DayOfWeek.FRIDAY, "Пятница");
+        DAY_OF_WEEK_TRANSLATIONS.put(DayOfWeek.SATURDAY, "Суббота");
+        DAY_OF_WEEK_TRANSLATIONS.put(DayOfWeek.SUNDAY, "Воскресенье");
     }
 
     public static int getWeekNum() {
-        LocalDate currentDate = LocalDate.now(samaraZone);
+        LocalDate currentDate = LocalDate.now(SAMARA_ZONE);
         LocalDate startOfYear = LocalDate.of(currentDate.getYear(), 1, 1);
         WeekFields weekFields = WeekFields.of(Locale.getDefault());
         int currentWeek = currentDate.get(weekFields.weekOfYear());
@@ -34,10 +33,8 @@ public class Time {
     }
 
     public static String getCurrentDay(int plus) {
-        LocalDateTime currentTime = LocalDateTime.now();
-        DayOfWeek nextDay = currentTime.getDayOfWeek().plus(plus);
-        String dayOfWeekEnglish = nextDay.getDisplayName(TextStyle.FULL, Locale.ENGLISH);
-        String dayOfWeekRussian = dayOfWeekTranslations.get(dayOfWeekEnglish);
-        return dayOfWeekRussian != null ? dayOfWeekRussian : "Неизвестный день";
+        LocalDateTime currentTime = LocalDateTime.now(SAMARA_ZONE);
+        DayOfWeek nextDay = currentTime.plusDays(plus).getDayOfWeek();
+        return DAY_OF_WEEK_TRANSLATIONS.getOrDefault(nextDay, "Неизвестный день");
     }
 }
