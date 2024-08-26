@@ -2,6 +2,7 @@ package akira.command;
 
 import akira.Bot;
 import akira.db.Core;
+import akira.listener.TimeCheckScheduler;
 import akira.util.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,10 +20,6 @@ import java.awt.*;
 import java.util.List;
 
 public class CommandHandler extends ListenerAdapter {
-    @Getter @Setter
-    private static int hour;
-    @Getter @Setter
-    private static int minute;
     @Setter
     private static TextChannel adminChannel;
     @Getter @Setter
@@ -122,8 +119,10 @@ public class CommandHandler extends ListenerAdapter {
                 event.reply("URL обновлен!").queue();
             }
             case "time" -> {
-                hour = event.getOption("hours").getAsInt();
-                minute = event.getOption("minutes").getAsInt();
+                int hour = event.getOption("hours").getAsInt();
+                int minute = event.getOption("minutes").getAsInt();
+                TimeCheckScheduler.setHour(hour);
+                TimeCheckScheduler.setMinute(minute);
                 Config.update("time.hour", hour);
                 Config.update("time.minute", minute);
                 event.reply("Время для рассылки обновлено на " + hour + ":" + minute).queue();
@@ -140,9 +139,10 @@ public class CommandHandler extends ListenerAdapter {
     }
 
     private MessageEmbed toEmbed(List<Day> lessons) {
+        String day = ScheduleParser.getCurrentDay();
         EmbedBuilder builder = new EmbedBuilder();
         builder.setColor(Color.RED);
-        builder.setTitle("Расписание на " + ScheduleParser.getCurrentDay());
+        builder.setTitle("Расписание на " + (day == null ? "выбранный день" : day));
 
         if (lessons.isEmpty()) {
             builder.setDescription("Расписания нет");
@@ -193,7 +193,7 @@ public class CommandHandler extends ListenerAdapter {
         return builder.build();
     }
 
-    private MessageEmbed userEmbed(List<User> userList) {
+    private MessageEmbed userEmbed(List<    User> userList) {
         EmbedBuilder builder = new EmbedBuilder();
         builder.setColor(Color.RED);
         builder.setTitle("Данные об НБ/УП");

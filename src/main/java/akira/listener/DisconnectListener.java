@@ -11,6 +11,6 @@ public class DisconnectListener extends ListenerAdapter {
 
     @Override
     public void onSessionDisconnect(@NotNull SessionDisconnectEvent event) {
-        LOGGER.warn("Bot disconnected from Discord at {}! State: {}", event.getTimeDisconnected(), event.getState());
+        LOGGER.warn("Bot status: {}! Time disconnect from discord: {}", event.getState(), event.getTimeDisconnected());
     }
 }

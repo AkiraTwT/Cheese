@@ -140,8 +140,8 @@ public class Bot extends ListenerAdapter {
         commandData.add(Commands.slash("time", "Установить время для автоматической рассылки")
                 .setGuildOnly(true)
                 .setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.ADMINISTRATOR))
-                .addOptions(new OptionData(OptionType.INTEGER, "hours", "Часы", true).setMinValue(0).setMaxValue(23))
-                .addOptions(new OptionData(OptionType.INTEGER, "minutes", "Минуты", true).setMinValue(0).setMaxValue(59)));
+                .addOptions(new OptionData(OptionType.INTEGER, "hours", "Часы в интервале 0-23", true).setMinValue(0).setMaxValue(23))
+                .addOptions(new OptionData(OptionType.INTEGER, "minutes", "Минуты в интервале 0-59", true).setMinValue(0).setMaxValue(59)));
 
         event.getGuild().updateCommands().addCommands(commandData).queue();
     }

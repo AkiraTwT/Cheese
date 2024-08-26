@@ -39,7 +39,7 @@ public class ScheduleParser {
         Document doc = Jsoup.parse(loadHtmlSnapshot(URL));
         Elements tables = doc.select("table");
         boolean isCorrectDay = false;
-        currentDay = "Сегодня";
+        currentDay = null;
 
         for (Element table : tables) {
             Elements rows = table.select("tr");

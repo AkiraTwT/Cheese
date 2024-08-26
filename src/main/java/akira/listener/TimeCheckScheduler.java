@@ -2,6 +2,7 @@ package akira.listener;
 
 import akira.command.CommandHandler;
 import akira.util.*;
+import lombok.Setter;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
@@ -22,12 +23,16 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class TimeCheckScheduler extends ListenerAdapter {
+    @Setter
+    private static int hour;
+    @Setter
+    private static int minute;
     private static final Logger LOGGER = LoggerFactory.getLogger(TimeCheckScheduler.class);
 
     @Override
     public void onReady(@NotNull ReadyEvent event) {
-        CommandHandler.setHour(getHour());
-        CommandHandler.setMinute(getMinute());
+        hour = getHourFromConfig();
+        minute = getMinuteFromConfig();
         CommandHandler.setAdminChannel(event.getJDA().getTextChannelById(getAdminChannelId()));
         CommandHandler.setDefaultChannel(event.getJDA().getTextChannelById(getDefaultChannelId()));
 
@@ -42,7 +47,7 @@ public class TimeCheckScheduler extends ListenerAdapter {
             public void run() {
                 LocalDateTime currentTime = LocalDateTime.now();
 
-                if (currentTime.getHour() == CommandHandler.getHour() && currentTime.getMinute() == CommandHandler.getMinute()) {
+                if (currentTime.getHour() == hour && currentTime.getMinute() == minute) {
                     List<Day> days = ScheduleParser.printScheduleForDay(Time.getCurrentDay(1));
                     TextChannel channel = CommandHandler.getDefaultChannel();
                     channel.sendMessageEmbeds(toEmbed(days)).queue();
@@ -74,11 +79,11 @@ public class TimeCheckScheduler extends ListenerAdapter {
         };
     }
 
-    private int getHour() {
+    private int getHourFromConfig() {
         return Config.getInteger("time.hour");
     }
 
-    private int getMinute() {
+    private int getMinuteFromConfig() {
         return Config.getInteger("time.minute");
     }
 
@@ -94,7 +99,7 @@ public class TimeCheckScheduler extends ListenerAdapter {
         String day = ScheduleParser.getCurrentDay();
         EmbedBuilder builder = new EmbedBuilder();
         builder.setColor(Color.RED);
-        builder.setTitle("Расписание на " + (day.equals("Сегодня") ? "Завтра" : day));
+        builder.setTitle("Расписание на " + (day == null ? "Завтра" : day));
 
         if (lessons.isEmpty()) {
             builder.setDescription("Расписания нет");
